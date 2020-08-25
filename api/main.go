@@ -1,6 +1,12 @@
 package main
-import "fmt"
+
+import (
+	"github.com/gin-gonic/gin"
+	"workbench/route"
+)
 
 func main() {
-	fmt.Println("workbench")
+	car := route.Initroute()
+	car.Use(gin.Logger())
+	car.Run()
 }

@@ -1,0 +1,8 @@
+Title = "workbench"
+
+[Mysql]
+Username = "root"
+Password = "0325"
+Database = "workbench"
+Port = 3306
+
