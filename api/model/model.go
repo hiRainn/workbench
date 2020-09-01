@@ -8,32 +8,34 @@ import (
 )
 
 type Mysql struct {
+	Host     string `toml:"host"`
 	Username string `toml:"username"`
 	Password string `toml:"password"`
 	Database string `toml:"database"`
-	Port int `toml:"port"`
+	Port     int    `toml:"port"`
 }
 
 type Conf struct {
 	Mysql Mysql
 }
 
-type Model struct{
-	Id int `json:"id";gorm:"PRIMARY_KEY;AUTO_INCREMENT;NOT NULL"`
-	Status uint8 `json:"status";gorm:"DEFAULT:0;type:tinyint;NOT NULL"`
+type Model struct {
+	Id        int   `json:"id";gorm:"PRIMARY_KEY;AUTO_INCREMENT;NOT NULL"`
+	Status    uint8 `json:"status";gorm:"DEFAULT:0;type:tinyint;NOT NULL"`
 	CreatedAt int64 `json:"created_at";gorm:"DEFAULT:0;NOT NULL;type:int(10);index:time_index"`
 }
+
 var db *gorm.DB
 
-func init()  {
+func init() {
 	conf := Conf{}
-	_,err:=toml.DecodeFile("./config/config.toml",&conf)
+	_, err := toml.DecodeFile("./config/config.toml", &conf)
 	if err != nil {
 		panic("获取配置文件失败，请检查配置项")
 	}
 
 	conn := conf.Mysql.Username + ":" + conf.Mysql.Password + "@/" + conf.Mysql.Database + "?charset=utf8&parseTime=True&loc=Local"
-	db, err = gorm.Open("mysql",conn)
+	db, err = gorm.Open("mysql", conn)
 	if err != nil {
 		fmt.Println(err)
 		panic("failed to connect database")
