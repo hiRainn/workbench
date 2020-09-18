@@ -4,6 +4,7 @@ const {getThemeColors, modifyVars} = require('./src/utils/themeUtil')
 const {resolveCss} = require('./src/utils/theme-color-replacer-extend')
 module.exports = {
   devServer: {
+	  port:8866
     // proxy: {
     //   '/api': { //此处要与 /services/api.js 中的 API_PROXY_PREFIX 值保持一致
     //     target: process.env.VUE_APP_API_BASE_URL,
@@ -51,7 +52,7 @@ module.exports = {
       }
     }
   },
-  publicPath: process.env.NODE_ENV === 'production' ? '/vue-antd-admin/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/' : '/',
   outputDir: 'dist',
   assetsDir: 'static',
   productionSourceMap: false
