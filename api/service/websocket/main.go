@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+type Content struct {
+}
+
 type ConnStatus struct {
 	Conn    *websocket.Conn //连接
 	Uid     string          //唯一id标示
