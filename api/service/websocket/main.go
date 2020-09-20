@@ -12,6 +12,13 @@ import (
 	"time"
 )
 
+type WebSocketService struct {
+	Port         int
+	StartService func() error
+	OnConnect    func() error
+	OnSendMsg    func() error
+}
+
 type Content struct {
 }
 
