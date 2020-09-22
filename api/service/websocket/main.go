@@ -13,13 +13,37 @@ import (
 )
 
 type WebSocketService struct {
-	Port         int
-	StartService func() error
-	OnConnect    func() error
-	OnSendMsg    func() error
+	Port       int
+	MaxClient  int
+	ClientList ConnStatus
 }
 
-type Content struct {
+//启动服务
+func (w *WebSocketService) StartService() error {
+
+	return nil
+}
+
+//停止服务
+func (w *WebSocketService) StopService() error {
+
+	return nil
+}
+
+//单独发送消息
+func (w *WebSocketService) SendMsg(content string) error {
+	return nil
+}
+
+//广播
+func (w *WebSocketService) Broadcast(content string) error {
+	return nil
+}
+
+//消息获取
+func (w *WebSocketService) GetMsg() (string, error) {
+
+	return "", nil
 }
 
 type ConnStatus struct {
