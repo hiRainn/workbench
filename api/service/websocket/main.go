@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"fmt"
@@ -18,32 +18,29 @@ type WebSocketService struct {
 	ClientList ConnStatus
 }
 
-//启动服务
-func (w *WebSocketService) StartService() error {
+//启动监听这个服务
+func (w *WebSocketService) StartService() {
 
-	return nil
 }
 
-//停止服务
-func (w *WebSocketService) StopService() error {
+//连接生成唯一key
+func (w *WebSocketService) SetKey() {
 
-	return nil
 }
 
-//单独发送消息
-func (w *WebSocketService) SendMsg(content string) error {
-	return nil
+//根据key发送消息
+func (w *WebSocketService) SenMsg(key, content string) {
+
 }
 
 //广播
-func (w *WebSocketService) Broadcast(content string) error {
-	return nil
+func (w *WebSocketService) Broadcast(content string) {
+
 }
 
-//消息获取
-func (w *WebSocketService) GetMsg() (string, error) {
+//关闭连接
+func (w *WebSocketService) CloseService() {
 
-	return "", nil
 }
 
 type ConnStatus struct {
@@ -118,7 +115,6 @@ func MaintenanceConn(seconed int64, sleep int) {
 			}
 		}
 	}
-
 }
 
 func main() {
