@@ -12,50 +12,47 @@ import (
 	"time"
 )
 
+type ConnStatus struct {
+	Conn    *websocket.Conn //连接
+	Key     string          //唯一id标示
+	LastAct int64           //上次活动时间
+}
+
 type WebSocketService struct {
-	Port       int
-	MaxClient  int
-	ClientList ConnStatus
+	Port          int    //监听端口
+	MaxClient     int    //最大连接数
+	IsCheck       bool   //是否开启不活跃检测
+	CleanTime     int64  //检测不活跃时间
+	CheckTime     int    //检测频率
+	SendMsgBefore bool   //强制下线前是否发送消息
+	MsgBefore     string //强制下线前发送的消息
+	ClientList    map[string]ConnStatus
 }
 
 //启动监听这个服务
 func (w *WebSocketService) StartService() {
+	if w.IsCheck {
+		go w.FlashClient()
+	}
+	//初始化
+	w.ClientList = make(map[string]ConnStatus)
+	if w.CleanTime <= 0 {
+		w.CleanTime = 60
+	}
+	if w.CheckTime <= 0 {
+		w.CheckTime = 5
+	}
+	addr := ":" + strconv.Itoa(w.Port)
+	if err := http.ListenAndServe(addr, websocket.Handler(w.Handle)); err != nil {
+		fmt.Println("监听错误", err)
+		os.Exit(1)
+	}
 
 }
 
-//连接生成唯一key
-func (w *WebSocketService) SetKey() {
-
-}
-
-//根据key发送消息
-func (w *WebSocketService) SenMsg(key, content string) {
-
-}
-
-//广播
-func (w *WebSocketService) Broadcast(content string) {
-
-}
-
-//关闭连接
-func (w *WebSocketService) CloseService() {
-
-}
-
-type ConnStatus struct {
-	Conn    *websocket.Conn //连接
-	Uid     string          //唯一id标示
-	LastAct int64           //上次活动时间
-}
-
-//维护所有已经连接的socket
-var clients map[*websocket.Conn]*ConnStatus
-
-//处理会话信息
-func talk(ws *websocket.Conn) {
-	clients[ws] = &ConnStatus{Conn: ws, Uid: getUid(8), LastAct: time.Now().Unix()}
-	fmt.Println(ws.RemoteAddr())
+func (w *WebSocketService) Handle(ws *websocket.Conn) {
+	key := w.SetKey(8)
+	w.ClientList[key] = ConnStatus{Conn: ws, Key: key, LastAct: time.Now().Unix()}
 	for {
 		reply := make([]byte, 1024)
 		if err := websocket.Message.Receive(ws, &reply); err != nil {
@@ -64,16 +61,15 @@ func talk(ws *websocket.Conn) {
 				break
 			}
 		}
-		clients[ws].LastAct = time.Now().Unix()
 		if err := websocket.Message.Send(ws, strings.ToUpper(string(reply))); err != nil {
 			fmt.Println("222222", err)
-			continue
+			break
 		}
 	}
-
 }
 
-func getUid(l int) string {
+//连接生成唯一key
+func (w *WebSocketService) SetKey(l int) string {
 	str := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRXTUVWXZY"
 	bytes := []byte(str)
 	result := []byte{}
@@ -84,46 +80,44 @@ func getUid(l int) string {
 	return string(result)
 }
 
-//广播给所有连接用户
-func talkToAll() {
-
+//根据key发送消息
+func (w *WebSocketService) SenMsg(key, content string) {
+	if err := websocket.Message.Send(w.ClientList[key].Conn, content); err != nil {
+		fmt.Println("send message error:", err)
+	}
 }
 
-//判断是否是心跳,如果是，则更新链接的活动时间
-func determineHeart(ws *websocket.Conn) bool {
-
-	return false
+//广播
+func (w *WebSocketService) Broadcast(content string) {
+	for _, v := range w.ClientList {
+		if err := websocket.Message.Send(v.Conn, content); err != nil {
+			fmt.Println("broadcast error:", err)
+		}
+	}
 }
 
-/*
-维护连接，多久没有活动则关闭连接
-@param second 无活动丢失连接的时长
-@param sleep 多久检查一次
-*/
-
-func MaintenanceConn(seconed int64, sleep int) {
-	t := time.NewTicker(time.Duration(sleep) * time.Second)
+//清除不活跃连接
+func (w *WebSocketService) FlashClient() {
+	t := time.NewTicker(time.Duration(w.CheckTime) * time.Second)
 	for {
 		select {
 		case <-t.C:
 			now := time.Now().Unix()
-			for _, v := range clients {
-				if v.LastAct+seconed < now {
-					websocket.Message.Send(v.Conn, "因长时间没有活动断开连接")
+			for _, v := range w.ClientList {
+				if v.LastAct+w.CleanTime < now {
+					if w.SendMsgBefore {
+						websocket.Message.Send(v.Conn, w.MsgBefore)
+					}
 					v.Conn.Close()
+					delete(w.ClientList, v.Key)
 				}
 			}
 		}
 	}
 }
 
-func main() {
-	clients = make(map[*websocket.Conn]*ConnStatus)
-	addr := ":" + strconv.Itoa(8888)
-	go MaintenanceConn(30, 5)
-	if err := http.ListenAndServe(addr, websocket.Handler(talk)); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
+//关闭连接
+func (w *WebSocketService) CloseService(key string) {
+	w.ClientList[key].Conn.Close()
+	delete(w.ClientList, key)
 }
