@@ -1,17 +1,28 @@
 package route
 
 import (
+	"fmt"
+	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
-	 a "workbench/controller"
+	"workbench/route/personal"
+	"workbench/route/teamwork"
 )
 
+type conf struct {
+	Personal bool
+}
 
-var r *gin.Engine
 func Initroute() *gin.Engine {
-	r := gin.Default()
-	//check init
-	r.GET("/bac/check_init",a.Test)
-
-
+	config := conf{}
+	_, err := toml.DecodeFile("./config/config.toml", &config)
+	if err != nil {
+		fmt.Println("读取配置失败")
+	}
+	var r *gin.Engine
+	if config.Personal {
+		r = personal.InitPersonalRoute()
+	} else {
+		r = teamwork.InitTeamRoute()
+	}
 	return r
 }

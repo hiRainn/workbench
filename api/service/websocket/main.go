@@ -42,6 +42,9 @@ func (w *WebSocketService) StartService() {
 	if w.CheckTime <= 0 {
 		w.CheckTime = 5
 	}
+	if w.Port == 0 {
+		w.Port = 9999
+	}
 	addr := ":" + strconv.Itoa(w.Port)
 	if err := http.ListenAndServe(addr, websocket.Handler(w.Handle)); err != nil {
 		fmt.Println("监听错误", err)
