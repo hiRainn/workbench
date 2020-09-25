@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/gin-gonic/gin"
+	"workbench/model"
 	"workbench/route"
 )
 
@@ -20,6 +21,8 @@ func main() {
 	if config.Port == "" {
 		config.Port = "8080"
 	}
+
+	model.InitDB()
 	car := route.Initroute()
 	car.Use(gin.Logger())
 	car.Run(":" + config.Port)

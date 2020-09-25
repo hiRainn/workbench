@@ -5,11 +5,18 @@ Port = "8888"
 Personal = true #设置为true则为个人版，设置为false则为协作版
 
 [Mysql]
-    Host = "127.0.0.1"
-    Username = "root"
-    Password = "0325"
-    Database = "workbench"
-    Port = 3306
+    [Mysql.Personal]
+        Host = "127.0.0.1"
+        Username = "root"
+        Password = "0325"
+        Database = "workbench"
+        Port = "3306"
+    [Mysql.Teamwork]
+        Host = "127.0.0.1"
+        Username = "root"
+        Password = "0325"
+        Database = "teamwork"
+        Port = "3306"
 
 [Redis]
 Host = "127.0.0.1"
