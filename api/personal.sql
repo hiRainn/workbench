@@ -10,6 +10,13 @@ create table  if not exists `user` (
     key(`created_at`)
 ) engine = innodb default charset = utf8 COMMENT '用户表';
 
+create table  if not exists `menu` (
+    `id` int(10) unsigned not null AUTO_INCREMENT COMMENT '主键',
+    `name` varchar(64) not null default ''  COMMENT '菜单名',
+    `path` varchar(64) not null default '' COMMENT '地址',
+    `meta` varchar(516) not null default '' COMMENT 'icon'
+) engine = innodb default charset = utf8 COMMENT '菜单表';
+
 create table if not exists `todo`(
     `id` int(10) unsigned not null AUTO_INCREMENT COMMENT '主键',
     `title` varchar(200) not null default '' COMMENT '标题',
@@ -44,8 +51,6 @@ create table if not exists `project_demand` (
     `status` tinyint unsigned not null default 0 COMMENT '状态，0-未开始，1-进行中，2-已完结，8-暂停，9-已取消',
     primary key(`id`)
 )  engine = innodb default charset = utf8 COMMENT '项目阶段';
-
-
 
 create table if not exists `project_type` (
     `id` int(10) unsigned not null AUTO_INCREMENT COMMENT '主键',
