@@ -32,6 +32,7 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGTERM, syscall.SIGQUIT, os.Interrupt)
 	go func() {
+		//监听信号中断后完成的回收操作，db的关闭及gin的关闭(此处未停止gin)
 		sig := <-sigs
 		fmt.Println(sig)
 		db := model.GetDb()
