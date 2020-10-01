@@ -14,7 +14,8 @@ create table  if not exists `menu` (
     `id` int(10) unsigned not null AUTO_INCREMENT COMMENT '主键',
     `name` varchar(64) not null default ''  COMMENT '菜单名',
     `path` varchar(64) not null default '' COMMENT '地址',
-    `meta` varchar(516) not null default '' COMMENT 'icon'
+    `meta` varchar(516) not null default '' COMMENT 'icon',
+    `pid` int not null  default 0 COMMENT '父id'
 ) engine = innodb default charset = utf8 COMMENT '菜单表';
 
 create table if not exists `todo`(
