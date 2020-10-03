@@ -34,6 +34,6 @@ func DelMenu(c *gin.Context) {
 
 }
 
-func FormatMenu() {
+func FormatMenu() []MenuList {
 
 }
