@@ -35,5 +35,7 @@ func DelMenu(c *gin.Context) {
 }
 
 func FormatMenu() []MenuList {
+	list := make([]MenuList, 0)
 
+	return list
 }
