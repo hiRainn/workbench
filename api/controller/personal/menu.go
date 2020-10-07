@@ -19,7 +19,8 @@ func GetMenu(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, list)
+	res := FormatMenu(list)
+	c.JSON(http.StatusOK, res)
 }
 
 func AddMenu(c *gin.Context) {
@@ -34,7 +35,7 @@ func DelMenu(c *gin.Context) {
 
 }
 
-func FormatMenu() []MenuList {
+func FormatMenu(menus []personal.Menu) []MenuList {
 	list := make([]MenuList, 0)
 
 	return list
