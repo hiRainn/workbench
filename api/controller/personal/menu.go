@@ -23,6 +23,7 @@ func GetMenu(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+//新增菜单
 func AddMenu(c *gin.Context) {
 
 }
