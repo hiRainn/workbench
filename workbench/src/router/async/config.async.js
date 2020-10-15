@@ -20,5 +20,6 @@ const routesConfig = [
 const options = {
   routes: parseRoutes(routesConfig, routerMap)
 }
+console.log(options.routes)
 
 export default options
